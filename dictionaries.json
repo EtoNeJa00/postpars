@@ -1,0 +1,12 @@
+{
+    "state_dictionary":{
+        "AZ": "Arizona",
+		"CA": "California",
+		"ID": "Idaho",
+		"IN": "Indiana",
+		"MA": "Massachusetts",
+		"OK": "Oklahoma",
+		"PA": "Pennsylvania",
+		"VA": "Virginia"
+    }
+}

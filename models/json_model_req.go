@@ -4,69 +4,60 @@ import (
 	"strings"
 	"errors"
 	"encoding/json"
-	"fmt"
 )
 
 type Request struct {
-	Req_type string 	`json:"req_type"`
-	Data []person		`json:"data"`
+	ReqType string 	`json:"req_type"`
+	Data []Person	`json:"data"`
 }
 
-type person struct{
+type Person struct{
 	Name string 
 	Address string
 	City string
 	State string
 }
 
-func (p *person) UnmarshalJSON(data []byte) error {
+func (p *Person) UnmarshalJSON(data []byte) error {
 	type temp struct{
-		Temp_str string `json:"item"`
+		TempStr string `json:"item"`
 	}
 	var item temp
 	json.Unmarshal([]byte(data), &item) 
 
-	if strings.TrimSpace(item.Temp_str) == ""{
+	if strings.TrimSpace(item.TempStr) == ""{
 		return nil
 	}
 	
-	person_arr := strings.Split(item.Temp_str, ",")
-	if len(person_arr)!=3{
-		return errors.New("Invalid format JSON:item")
+	personArr := strings.Split(item.TempStr, ",")
+	if len(personArr)!=3{
+		return errors.New("Invalid format item: "+item.TempStr)
 	}
-	for i := range person_arr {
-		person_arr[i] = strings.TrimSpace(person_arr[i])
-	}
-
-
-
-	city_state := strings.Split(person_arr[2]," ")
-	if len(city_state)<2{
-		return errors.New("Invalid JSON: item: city and state")
-	}
-//to do
-	states_map := map[string]string{
-		"AZ": "Arizona",
-		"CA": "California",
-		"ID": "Idaho",
-		"IN": "Indiana",
-		"MA": "Massachusetts",
-		"OK": "Oklahoma",
-		"PA": "Pennsylvania",
-		"VA": "Virginia",
+	for i := range personArr {
+		personArr[i] = strings.TrimSpace(personArr[i])
 	}
 
-	p.Name = person_arr[0]
-	p.Address = person_arr[1]
-	for i := 0;i<len(city_state)-1; i++{
+	cityState := strings.Split(personArr[2]," ")
+	if len(cityState)<2{
+		return errors.New("Invalid format in item: "+item.TempStr+" in "+personArr[2])
+	}
+
+	statesMap := GetDict().States
+
+	p.Name = personArr[0]
+	p.Address = personArr[1]
+	for i := 0;i<len(cityState)-1; i++{
 		if i==0 {
-			p.City=city_state[i]
+			p.City=cityState[i]
 			continue
 		}
-		p.City += " "+city_state[i]
+		p.City += " "+cityState[i]
 	}
-	p.State = states_map[city_state[len(city_state)-1]]
+	p.State = statesMap[cityState[len(cityState)-1]]
 
-	fmt.Println(p)
 	return nil
+}
+
+func (p *Person)ToString () string{
+	return "\n..... "+p.Name+" "+p.Address+" "+p.City+" "+p.State
 }
