@@ -24,7 +24,7 @@ func (a *AddressHandler) GetAddresses(w http.ResponseWriter, r *http.Request) {
 		}
 		response := models.AddressResponse{ 
 			Res_type : request.ReqType,
-			Result : "failure",
+			Result : "fail",
 			Data : err.Error(),
 		}
 		json.NewEncoder(w).Encode(response)
