@@ -22,6 +22,7 @@ func (p *Person) UnmarshalJSON(data []byte) error {
 	type temp struct{
 		TempStr string `json:"item"`
 	}
+	
 	var item temp
 	json.Unmarshal([]byte(data), &item) 
 
