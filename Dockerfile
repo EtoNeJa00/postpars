@@ -1,5 +1,6 @@
 FROM alpine
 WORKDIR /go/bin
-COPY configuraton/configuration.json configuraton/
-COPY Rest_Api_TV .
+COPY dictionaries.json .
+COPY postpars .
+CMD ["export LISTEN_PORT=8080"]
 CMD ["/go/bin/postpars"]

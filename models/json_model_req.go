@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 )
 
-type Request struct {
+type AddressRequest struct {
 	ReqType string 	`json:"req_type"`
 	Data []Person	`json:"data"`
 }
@@ -31,7 +31,7 @@ func (p *Person) UnmarshalJSON(data []byte) error {
 	
 	personArr := strings.Split(item.TempStr, ",")
 	if len(personArr)!=3{
-		return errors.New("Invalid format item: "+item.TempStr)
+		return errors.New("invalid format item: "+item.TempStr)
 	}
 	for i := range personArr {
 		personArr[i] = strings.TrimSpace(personArr[i])
@@ -39,10 +39,14 @@ func (p *Person) UnmarshalJSON(data []byte) error {
 
 	cityState := strings.Split(personArr[2]," ")
 	if len(cityState)<2{
-		return errors.New("Invalid format in item: "+item.TempStr+" in "+personArr[2])
+		return errors.New("invalid format in item: "+item.TempStr+" in "+personArr[2])
 	}
 
-	statesMap := GetDict().States
+	dict, err := GetDict()
+	if err!=nil{
+		return err
+	}
+	statesMap := dict.States
 
 	p.Name = personArr[0]
 	p.Address = personArr[1]
@@ -53,7 +57,13 @@ func (p *Person) UnmarshalJSON(data []byte) error {
 		}
 		p.City += " "+cityState[i]
 	}
-	p.State = statesMap[cityState[len(cityState)-1]]
+
+	state := statesMap[cityState[len(cityState)-1]]
+	if state==""{
+		return errors.New("invalid format in item: "+item.TempStr+" in "+personArr[2])
+	}
+
+	p.State = state
 
 	return nil
 }

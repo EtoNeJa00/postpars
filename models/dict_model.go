@@ -1,9 +1,10 @@
 package models
 
 import (
+	"fmt"
+	"errors"
 	"io/ioutil"
 	"encoding/json"
-	"fmt"
 	"os"
 )
 
@@ -11,24 +12,27 @@ import (
 		States map[string]string `json:"state_dictionary"`
 	} 
 
-	func GetDict ()StateDictionary{
+	func GetDict ()(StateDictionary, error){
+		var stateDict StateDictionary
+		
 		file, err := os.Open("dictionaries.json")
 		if err != nil{
-			fmt.Print(err)
+			fmt.Println(err)
+			return stateDict, errors.New("internal server error")
 		}
 	
 		defer file.Close()
 
 		byteValue, _ := ioutil.ReadAll(file)
 		if err != nil{
-			fmt.Print(err)
+			fmt.Println(err)
+			return stateDict, errors.New("internal server error")
 		}
-		
-		var stateDict StateDictionary
 
 		err = json.Unmarshal(byteValue, &stateDict)
 		if err != nil{
-			fmt.Print(err)
+			fmt.Println(err)
+			return stateDict, errors.New("internal server error")
 		}
-		return stateDict
+		return stateDict, nil
 	}
