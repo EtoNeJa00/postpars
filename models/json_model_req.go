@@ -43,12 +43,6 @@ func (p *Person) UnmarshalJSON(data []byte) error {
 		return errors.New("invalid format in item: "+item.TempStr+" in "+personArr[2])
 	}
 
-	dict, err := GetDict()
-	if err!=nil{
-		return err
-	}
-	statesMap := dict.States
-
 	p.Name = personArr[0]
 	p.Address = personArr[1]
 	for i := 0;i<len(cityState)-1; i++{
@@ -59,7 +53,7 @@ func (p *Person) UnmarshalJSON(data []byte) error {
 		p.City += " "+cityState[i]
 	}
 
-	state := statesMap[cityState[len(cityState)-1]]
+	state := cityState[len(cityState)-1]
 	if state==""{
 		return errors.New("invalid format in item: "+item.TempStr+" in "+personArr[2])
 	}

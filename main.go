@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"net/http"
 	"github.com/gorilla/mux"
@@ -9,13 +10,18 @@ import (
 )
 
 func main() {
-	  var addressHandler c.AddressHandler
 
-	  port:=":"+os.Getenv("LISTEN_PORT")
+	addressHandler, err := c.NewAddressHandler()
+	if err!=nil{
+		fmt.Println(err)
+		return
+	}
 
-	  r := mux.NewRouter()
-	  r.HandleFunc("/api/adresses", addressHandler.GetAddresses).Methods("POST")
-	  http.ListenAndServe(port, r)
+	port:=":"+os.Getenv("LISTEN_PORT")
+
+	r := mux.NewRouter()
+	r.HandleFunc("/api/adresses", addressHandler.GetAddresses).Methods("POST")
+	http.ListenAndServe(port, r)
 }
 
 

@@ -9,7 +9,22 @@ import (
 )
 
 type AddressHandler struct {
+	Dictionary models.Dictionary
 }
+
+func NewAddressHandler()(AddressHandler, error){
+	var adressHandl AddressHandler
+
+	dict, err := models.GetDict()
+	if err != nil{
+		return adressHandl, err
+	}
+	
+	adressHandl.Dictionary=dict
+
+	return adressHandl, nil
+}
+
 func (a *AddressHandler) GetAddresses(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	
@@ -24,7 +39,7 @@ func (a *AddressHandler) GetAddresses(w http.ResponseWriter, r *http.Request) {
 		}
 		response := models.AddressResponse{ 
 			Res_type : request.ReqType,
-			Result : "failure",
+			Result : "fail",
 			Data : err.Error(),
 		}
 		json.NewEncoder(w).Encode(response)
@@ -32,13 +47,17 @@ func (a *AddressHandler) GetAddresses(w http.ResponseWriter, r *http.Request) {
 		response := models.AddressResponse{ 
 			Res_type : request.ReqType,
 			Result : "successful",
-			Data : getResultString(request.Data),
+			Data : getResultString(request.Data,a.Dictionary.States),
 		}
 		json.NewEncoder(w).Encode(response)
 	}
 }
 
-func getResultString(data []models.Person) string{
+func getResultString(data []models.Person, dict map[string]string) string{
+	for i:=0; i<len(data);i++{
+		data[i].State=dict[data[i].State]
+	}
+
 	sortRuls := func(i,j int) bool{
 		if data[i].State == data[j].State{
 			return data[i].Name < data[j].Name 
