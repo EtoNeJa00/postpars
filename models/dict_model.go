@@ -8,12 +8,12 @@ import (
 	"os"
 )
 
-	type StateDictionary struct{ 
+	type Dictionary struct{ 
 		States map[string]string `json:"state_dictionary"`
 	} 
 
-	func GetDict ()(StateDictionary, error){
-		var stateDict StateDictionary
+	func GetDict ()( Dictionary, error){
+		var stateDict  Dictionary
 		
 		file, err := os.Open("dictionaries.json")
 		if err != nil{
@@ -34,5 +34,6 @@ import (
 			fmt.Println(err)
 			return stateDict, errors.New("internal server error")
 		}
+		
 		return stateDict, nil
 	}
